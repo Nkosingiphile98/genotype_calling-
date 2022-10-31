@@ -7,8 +7,10 @@ edition = "2021"
 
 [dependencies]
 csv = "1.1"
-plotters = "0.3"
-fast-float = "0.2"
 base64 = "0.13.0"
 utf8-read = "0.4.0"
 byteorder = "1.4.3"
+
+libm = "0.2.5"
+plotters = "0.3.4"
+fast-float = "0.2.0"
