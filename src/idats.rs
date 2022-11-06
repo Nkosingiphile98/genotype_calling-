@@ -3,33 +3,18 @@ use std::io;
 use std::io::Read;
 use std::fs::File;
 use std::io::BufReader;
-//use std::io::prelude::*;
-//use std::path;
-use libm::atan;
 use plotters::prelude::*;
+
+
+
 
 fn main() ->io::Result<()> {
 
-    //Create method to calculate arc tangent of red and green intensity ratio
-    /*pub mod math {
-        //use super::*;
-        extern "C" {
-
-            pub fn atan(x: f64) -> f64;
-
-
-        }}*/
-    pub const PI: f64 = 3.14159265358979323846264338327950288f64;
-
-
-
-
-
-
-    //"/dataB/popdata/HapMap/h3a/H3Africa_HapMap_IDATs/201958790010"
-    //"/dataB/popdata/HapMap/h3a/H3Africa_HapMap_IDATs/201958790010"
+    
 
     let mut input = String::new();
+
+    let mut loop_counter=0;
 
     //Declare dir_vec(vector) to store file directories
     let mut dir_vec: Vec<std::path::PathBuf> = Vec::new();
@@ -102,7 +87,7 @@ fn main() ->io::Result<()> {
     let mut  buffer3 = Vec::new();
     reader.read_to_end(&mut buffer3)?;
 
-    let vec_capacity = buffer3;
+    let _vec_capacity = buffer3;
     //***************************************************//
 
     //*******************create output bmp image************************//
@@ -114,8 +99,8 @@ fn main() ->io::Result<()> {
         .set_label_area_size(LabelAreaPosition::Bottom, 40.0)
         .set_label_area_size(LabelAreaPosition::Right, 40.0)
         .set_label_area_size(LabelAreaPosition::Top, 40.0)
-        .caption("Scatter Plot", ("sans-serif", 40.0))
-        .build_cartesian_2d(0.0..255.0, 0..255)
+        .caption("Allelic intensity ratio scatter plot", ("sans-serif", 40.0))
+        .build_cartesian_2d(0.0..2147483647.0, 0..2147483647)
         .unwrap();
 
     ctx.configure_mesh().draw().unwrap();
@@ -162,20 +147,30 @@ fn main() ->io::Result<()> {
 
 
 
-    for x in 0..vec_capacity.capacity(){
+    
+
+
+
+    loop {
+
 
         // access green and red intensities
-        let  green_int : u8 = u8::from_be_bytes([two_d_vector[0][x]]);
-        let  red_int : u8 = u8::from_be_bytes([two_d_vector[1][x]]);
+        let green_int: u32 = u32::from_be_bytes([two_d_vector[0][loop_counter],two_d_vector[0][loop_counter+1],two_d_vector[0][loop_counter+2],two_d_vector[0][loop_counter+3]]);
+        let red_int: u32 = u32::from_be_bytes([two_d_vector[1][loop_counter],two_d_vector[1][loop_counter+1],two_d_vector[1][loop_counter+2],two_d_vector[1][loop_counter+3]]);
 
         let mut red=vec![];
         let mut green:Vec<i32>=vec![];
 
-        if red_int !=0 {
+        println!("Green: {}",green_int);
+        println!("Red: {}",red_int);
 
-            if atan((green_int/ red_int) as f64) !=0.0 {
+        if red_int !=0 && red_int!=green_int && green_int!=0 {
 
-                let polar_angle = 2.0/PI*atan((green_int /red_int) as f64);
+            
+
+                let ratio :f64 = red_int as f64/(red_int as f64+green_int as f64);
+
+
 
                 red.push(red_int.as_f64());
                 green.push(green_int as i32);
@@ -183,42 +178,47 @@ fn main() ->io::Result<()> {
                 //[(red_int,green_int)]
                 let vec3: Vec<(f64, i32)>= red.iter().cloned().zip(green.iter().cloned()).collect();
 
-                println!("{:?}",vec3);
+                //println!("{:?}",vec3);
 
 
                 red.clear();
                 green.clear();
-
-                if polar_angle<0.67 && polar_angle>0.33{
-
-                    ctx.draw_series(
-                        vec3.iter().map(|point| Circle::new(*point,  4.0_f64, &BLUE)),
-                    ).unwrap();
-                }
-
-                if polar_angle>0.0 && polar_angle<0.34 {
-
-                    ctx.draw_series(
-                        vec3.iter().map(|point| Circle::new(*point,  4.0_f64, &RED)),
-                    ).unwrap();
-                }
-
-                if polar_angle<=1.0 && polar_angle>0.67{
+                if ratio<0.34 && ratio>=0.0{
 
                     ctx.draw_series(
                         vec3.iter().map(|point| Circle::new(*point,  4.0_f64, &GREEN)),
                     ).unwrap();
                 }
+                if ratio<0.67 && ratio>0.33{
 
-                // println!("{}",polar_angle);
-            }
+                    println!("{}",ratio);
 
+                    ctx.draw_series(
+                        vec3.iter().map(|point| Circle::new(*point, 4.0_f64, &BLUE)),
+                    ).unwrap();
+                }
+
+
+
+                if ratio<=1.0 && ratio>0.66{
+
+                    ctx.draw_series(
+                        vec3.iter().map(|point| Circle::new(*point,  4.0_f64, &RED)),
+                    ).unwrap();
+                }
+            
         }
+
+        loop_counter=loop_counter+4;
+        
+
 
     }
 
-    Ok(())
 }
+
+
+
 
 
 
