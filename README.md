@@ -1,12 +1,12 @@
 # idats.rs 
 
-This code to reads individual pairs of green and red intensities from (*.idat) files. The intensities on a 2D vector and a k-means algoithm to determine clusters.
-The output is displayed on a scatter plot.  
+This code to reads individual pairs of green and red intensities from (*.idat) files. The intensities are stored on a 2D vector. A K-means machine learning algoithm 
+partions the data points based on thier minimum distance to centroids. After genotype clusters are determined, the output is visualised on a scatter plot.  
 
 ### Basic use 
 
-A user is allowed to enter a path where the IDAT data is stored. If the all files on the given path are of (*.idat) format, the user should wait for the data to 
-be extraction, stored, and clustering. After all the data is clustered, the program will begin to plot until a (*.bmp) image is created depicting the output.
+A user is allowed to enter a path where the IDAT intensity data is stored. If the all files on the given path are of (*.idat) format, the user waits for the data to 
+be extracted, stored, and clustered. After clustering is done, the program will begin to plot until a (*.bmp) image will be created depicting the output.
 
 
 ### Requirements 
