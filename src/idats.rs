@@ -1,22 +1,10 @@
-use std::borrow::Cow;
-use std::ffi::{OsStr, OsString};
-use std::fs;
+
 extern crate base64;
-use csv::Writer;
 use std::io;
 use std::io::Read;
-use std::fs::{DirEntry, File, read_dir};
+use std::fs::File;
 use std::io::BufReader;
-use std::io::prelude::*;
-use std::io::Cursor;
-use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
-use libm::atan;
 use plotters::prelude::*;
-use std::error::Error;
-use std::ptr::null;
-use fast_float::parse;
-use plotters::style::full_palette::RED_50;
-use std::fs::create_dir;
 // Import the linfa prelude and KMeans algorithm
 use linfa::prelude::*;
 use linfa_clustering::KMeans;
@@ -25,8 +13,7 @@ use ndarray::prelude::*;
 //use ndarray::stack;
 use rand::prelude::*;
 // Import the plotters crate to create the scatter plot
-use plotters::prelude::*;
-use ndarray::{arr2,arr3, Axis, stack};
+use ndarray::arr2;
 
 fn main()  ->io::Result<()>{
 
@@ -84,7 +71,7 @@ fn main()  ->io::Result<()>{
     let mut file_counter=0;
 
     //Run loop half times the number of files in path///if theres 16 files the loop will run 8 times
-    for file_index in 0..(dir_vec_counter/2)  {
+    for _file_index in 0..(dir_vec_counter/2)  {
 
             //Read Grn file into vector(buffer1)
             let file1 = File::open(dir_vec[file_counter].as_path())?;
@@ -111,7 +98,7 @@ fn main()  ->io::Result<()>{
             let mut  buffer3 = Vec::new();
             reader.read_to_end(&mut buffer3)?;
 
-            let mut vec_capacity = buffer3;
+            let  vec_capacity = buffer3;
             //***************************************************//
 
 
@@ -120,11 +107,11 @@ fn main()  ->io::Result<()>{
             let mut green_data =vec![];
             let mut red_data =vec![];
 
-            let mut filename1 = dir_vec[file_counter].as_path().file_stem().unwrap().to_ascii_lowercase();  //access initial file name in the pair
-            let mut filename2 = dir_vec[file_counter+1].as_path().file_stem().unwrap().to_ascii_lowercase(); //access next file name in the pair
+            let  filename1 = dir_vec[file_counter].as_path().file_stem().unwrap().to_ascii_lowercase();  //access initial file name in the pair
+            let  filename2 = dir_vec[file_counter+1].as_path().file_stem().unwrap().to_ascii_lowercase(); //access next file name in the pair
 
         let mut owned_string: std::borrow::Cow<str> = filename1.to_string_lossy();  //convert file names to string flossy in order to combine them
-        let mut owned_string2: std::borrow::Cow<str> = filename2.to_string_lossy();
+        let  owned_string2: std::borrow::Cow<str> = filename2.to_string_lossy();
         let extension_bmp: &str = ".bmp"; //create extension string
 
         owned_string=owned_string+owned_string2+extension_bmp; //combine file names and extension to create bmp image
@@ -163,16 +150,16 @@ fn main()  ->io::Result<()>{
             let mut all_data=vec![];
 
         //run a loop to convert the bytes in in 2d vector to 32 bit integers
-            for x in 0..(vec_capacity.capacity()/4) {
+            for _x in 0..(vec_capacity.capacity()/4) {
 
                 // access green and red intensities
-                let mut green_int: u32 = u32::from_be_bytes([two_d_vector[0][loop_counter], two_d_vector[0][loop_counter + 1], two_d_vector[0][loop_counter + 2], two_d_vector[0][loop_counter + 3]]);
-                let mut red_int: u32 = u32::from_be_bytes([two_d_vector[1][loop_counter], two_d_vector[1][loop_counter + 1], two_d_vector[1][loop_counter + 2], two_d_vector[1][loop_counter + 3]]);
+                let  green_int: u32 = u32::from_be_bytes([two_d_vector[0][loop_counter], two_d_vector[0][loop_counter + 1], two_d_vector[0][loop_counter + 2], two_d_vector[0][loop_counter + 3]]);
+                let  red_int: u32 = u32::from_be_bytes([two_d_vector[1][loop_counter], two_d_vector[1][loop_counter + 1], two_d_vector[1][loop_counter + 2], two_d_vector[1][loop_counter + 3]]);
 
                 //push the data in a coordinate form in the all data vec
                 all_data.push([red_int as f64,green_int as f64]);
 
-                println!("{}",red_int);
+                println!("{:?}",all_data);
 
 
                 loop_counter=loop_counter+4;
